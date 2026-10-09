@@ -87,6 +87,13 @@ lightbar.build(root, pack, 'lightbar_samu', ('SAMU',), 'Rampe SAMU (2 tons)')
 import emergency
 emergency.build(root, pack)
 
+# --- Belroft Motors : bateaux Police / Pompiers et dépanneuse (BELROFT_ROOT = jar Belroft extrait) ---
+bel = os.environ.get('BELROFT_ROOT')
+if bel:
+    lightbar.build(root, pack, 'lightbar_depannage', ('DEPANNAGE',), 'Gyrophare Dépannage (orange)', amber=True)
+    import belroft_pack
+    belroft_pack.build(bel, pack)
+
 # --- Peugeot 508 GT / e-2008 (convertis depuis FBX par peugeot.py ; texturés par peugeot_variants.py) ---
 PEUGEOT = {  # id -> (donneur, titre)
     'peugeot_508_gt': ('audi_a6_c8a', 'Peugeot 508 GT'),

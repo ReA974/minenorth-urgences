@@ -349,7 +349,7 @@ class Livery:
         return np.clip(out * np.clip(lum * 0.75 + 0.25, 0.55, 1.0), 0, 255)
 
 
-def bake(v, vt, vn, faces, tex, livery, body_col=None):
+def bake(v, vt, vn, faces, tex, livery, body_col=None, paint_re=None, mask_fn=None):
     W, H = tex.size
     big = tex.resize((W * SS, H * SS), Image.NEAREST).convert('RGBA')
     arr = np.asarray(big, float).copy()
@@ -360,9 +360,9 @@ def bake(v, vt, vn, faces, tex, livery, body_col=None):
         if o.lower() == 'body' and a[1] >= 0:
             uv = (vt[a[1]] + vt[b[1]] + vt[c[1]]) / 3
             samp.append(tuple(np.asarray(tex.convert('RGB'))[min(H - 1, int((1 - uv[1]) * H)), min(W - 1, int(uv[0] * W))]))
-    body_col = np.array(body_col if body_col is not None else max(set(samp), key=samp.count), float)
+    body_col = np.array(body_col if body_col is not None else (max(set(samp), key=samp.count) if samp else (0, 0, 0)), float)
     for o, (a, b, c) in tris(faces):
-        if not PAINT.match(o) or min(a[1], b[1], c[1]) < 0:
+        if not (paint_re or PAINT).match(o) or min(a[1], b[1], c[1]) < 0:
             continue
         uv = np.array([vt[a[1]], vt[b[1]], vt[c[1]]])
         px = uv[:, 0] * W * SS
@@ -397,7 +397,7 @@ def bake(v, vt, vn, faces, tex, livery, body_col=None):
         N = np.tile(n, (len(P), 1))
         ix, iy = xs.astype(int), ys.astype(int)
         cur = arr[iy, ix, :3]
-        mask = np.abs(cur - body_col).max(1) < 28    # on ne repeint que la peinture de la carrosserie
+        mask = mask_fn(cur) if mask_fn else np.abs(cur - body_col).max(1) < 28    # on ne repeint que la peinture de la carrosserie
         if not mask.any():
             continue
         new = Livery_color[0].color(P[mask], N[mask], o, cur[mask])
@@ -429,13 +429,13 @@ def run2(root, model, outdir, bac=False, solid=None, suffix=None, objdir=None, t
     return img
 
 
-def preview(root, model, tex_path, out, objpath=None, views=None, hide=None, ycut=None):
+def preview(root, model, tex_path, out, objpath=None, views=None, hide=None, ycut=None, keep_re=None):
     """Rendu orthographique texturé (z-buffer) : côté gauche, avant 3/4, arrière 3/4, dessus."""
     base = os.path.join(root, 'assets/gvp')
     v, vt, vn, faces = load_obj(objpath or f'{base}/objmodels/vehicles/cars/{model}.obj')
     tex = np.asarray(Image.open(tex_path).convert('RGB'))
     TH, TW = tex.shape[:2]
-    keep = re.compile(r'^(body|door\w+|hood2?|hatch|slidedoor|under|in|&.*|translucent.*)$', re.I)
+    keep = re.compile(keep_re or r'^(body|door\w+|hood2?|hatch|slidedoor|under|in|&.*|translucent.*)$', re.I)
     views = views or [(90, 0), (35, 20), (145, 20), (0, 85)]  # (azimut, élévation)
     S = 420
     sheet = Image.new('RGB', (S * len(views), S), (120, 160, 200))

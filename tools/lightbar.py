@@ -19,15 +19,20 @@ WHITE_LIGHT = 'CFE0FF'
 SHELL = {'translucent'}        # coque transparente : sert à poser la plaque à la surface
 
 
-def recolor_palette(img):
-    """Rouge -> bleu (alpha conservé), gris sombres des pieds et du socle -> noir."""
+def recolor_palette(img, amber=False):
+    """Rouge -> bleu (ou orange si amber ; alpha conservé), gris sombres des pieds et du socle -> noir."""
     a = np.asarray(img.convert('RGBA'), float).copy()
     r, g, b = a[..., 0], a[..., 1], a[..., 2]
     red = (r > g + 40) & (r > b + 40)
     lum = r[red]
-    a[..., 0][red] = lum * 0.04
-    a[..., 1][red] = lum * 0.24
-    a[..., 2][red] = np.minimum(255, lum * 1.20 + 20)
+    if amber:
+        a[..., 0][red] = np.minimum(255, lum * 1.15 + 20)
+        a[..., 1][red] = np.minimum(255, lum * 0.72 + 8)
+        a[..., 2][red] = lum * 0.04
+    else:
+        a[..., 0][red] = lum * 0.04
+        a[..., 1][red] = lum * 0.24
+        a[..., 2][red] = np.minimum(255, lum * 1.20 + 20)
     grey = (np.abs(r - g) < 3) & (np.abs(g - b) < 3) & (r < 200) & (r > 0) & (a[..., 3] > 250)
     a[..., :3][grey] = (a[..., :3][grey] * 0.42)
     return Image.fromarray(a.clip(0, 255).astype('uint8'), 'RGBA')
@@ -118,7 +123,7 @@ class Out:
         self.nv += 4; self.nvt += 4; self.nvn += 1
 
 
-def build(gvp_root, pack_root, part='lightbar_fr', sign_lines=('POLICE', 'NATIONALE'), title='Rampe Police Nationale (2 tons)'):
+def build(gvp_root, pack_root, part='lightbar_fr', sign_lines=('POLICE', 'NATIONALE'), title='Rampe Police Nationale (2 tons)', amber=False):
     src = os.path.join(gvp_root, 'assets', 'gvp')
     dst = os.path.join(pack_root, 'assets', PID)
     lines = open(os.path.join(src, 'objmodels', 'parts', 'others', BASE + '.obj'), encoding='utf-8', errors='ignore').read().splitlines()
@@ -159,15 +164,17 @@ def build(gvp_root, pack_root, part='lightbar_fr', sign_lines=('POLICE', 'NATION
     open(os.path.join(dst, 'objmodels', 'parts', 'others', part + '.obj'), 'w', encoding='utf-8', newline='\n').write(
         '\n'.join(out_lines + o.lines) + '\n')
     pal = Image.open(os.path.join(src, 'textures', 'parts', 'others', BASE + '.png')).convert('RGBA')
-    build_atlas(recolor_palette(pal), sign_lines).save(os.path.join(dst, 'textures', 'parts', 'others', part + '.png'))
+    build_atlas(recolor_palette(pal, amber), sign_lines).save(os.path.join(dst, 'textures', 'parts', 'others', part + '.png'))
     item = Image.open(os.path.join(src, 'textures', 'item', 'parts', 'others', BASE + '.png')).convert('RGBA')
-    recolor_palette(item).save(os.path.join(dst, 'textures', 'item', 'parts', 'others', part + '.png'))
+    recolor_palette(item, amber).save(os.path.join(dst, 'textures', 'item', 'parts', 'others', part + '.png'))
 
     # définition : celle de usa1, feux bleus, sirène française
     t = open(os.path.join(src, 'jsondefs', 'parts', 'others', BASE + '.json'), encoding='utf-8').read()
     j = json.loads(re.sub(r',(\s*[}\]])', r'\1', t))
     for lo in j['rendering']['lightObjects']:
-        lo['color'] = WHITE_LIGHT if lo['color'].upper() == 'FFFFFF' else BLUE_LIGHT
+        lo['color'] = WHITE_LIGHT if lo['color'].upper() == 'FFFFFF' else ('FF9A00' if amber else BLUE_LIGHT)
+    if amber:
+        j['rendering']['sounds'] = []     # gyrophare de dépannage : pas de sirène
     for snd in j['rendering'].get('sounds', []):
         snd['name'] = f'{PID}:siren_fr_2tons'
     j['definitions'] = [{'subName': '', 'name': title, 'extraMaterialLists': [[]]}]

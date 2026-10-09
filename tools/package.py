@@ -24,6 +24,13 @@ Contenu base sur Kaminari Motor Work (gvp).
     side="BOTH"
 
 [[dependencies.minenorthpolicecar]]
+    modId="belroftmotors"
+    mandatory=true
+    versionRange="[1,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.minenorthpolicecar]]
     modId="gvp"
     mandatory=true
     versionRange="[2.6.1,)"
