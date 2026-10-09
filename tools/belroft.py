@@ -133,6 +133,10 @@ if __name__ == '__main__':
 
 
 # ====================================================================== dépanneuse (harpy + plateau)
+# géométrie du plateau (repère du Harpy) : partagée avec belroft_pack (points d'attache, collisions, rampe)
+BED = dict(zr=-2.85, zf=2.85, xw=1.2, yt=0.95, zramp=-6.0, yramp=0.10)
+
+
 def build_tow_truck(belroft_root, outdir):
     """Harpy (châssis-cabine) + plateau de dépanneuse. Écrit harpy_depannage.obj / .png dans outdir."""
     from PIL import ImageDraw, ImageFont
@@ -198,7 +202,7 @@ def build_tow_truck(belroft_root, outdir):
         if 'right' not in skip: quad(obj, [(x1, y0, z0), (x1, y1, z0), (x1, y1, z1), (x1, y0, z1)], s)
         if 'left' not in skip: quad(obj, [(x0, y0, z1), (x0, y1, z1), (x0, y1, z0), (x0, y0, z0)], s)
 
-    ZR, ZF, XW, YB, YT = -2.85, 2.85, 1.2, 0.60, 0.95
+    ZR, ZF, XW, YB, YT = BED['zr'], BED['zf'], BED['xw'], 0.60, BED['yt']
     box('bed_deck', -XW, XW, YT - 0.12, YT, ZR, ZF, 'steel')
     box('bed_frame', -0.85, 0.85, 0.28, YT - 0.12, ZR + 0.2, ZF - 0.2, 'black')
     # ridelles peintes (texte lisible de l'extérieur : côté gauche (+x) de l'arrière vers l'avant = z décroissant)
@@ -221,7 +225,7 @@ def build_tow_truck(belroft_root, outdir):
     box('bed_winch', -0.45, 0.45, YT, 1.30, 1.95, ZF - 0.12, 'orange')
     box('bed_rail', -XW, XW, YT, YT + 0.10, ZR, ZR + 0.08, 'black', skip=('bottom',))
     s = swatch('steel')
-    ZRAMP, YRAMP = -3.75, 0.45
+    ZRAMP, YRAMP = BED['zramp'], BED['yramp']
     quad('bed_ramp', [(-XW, YT, ZR), (-XW, YRAMP, ZRAMP), (XW, YRAMP, ZRAMP), (XW, YT, ZR)], s)           # dessus (normale vers le haut et l'arrière)
     quad('bed_ramp', [(-XW, YT - 0.12, ZR), (XW, YT - 0.12, ZR), (XW, YRAMP - 0.10, ZRAMP), (-XW, YRAMP - 0.10, ZRAMP)], s)   # dessous
     quad('bed_ramp', [(-XW, YRAMP - 0.10, ZRAMP), (XW, YRAMP - 0.10, ZRAMP), (XW, YRAMP, ZRAMP), (-XW, YRAMP, ZRAMP)], s)      # tranche
