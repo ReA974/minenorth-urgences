@@ -1,0 +1,5 @@
+# Contenu généré / copié du pack Kaminari (gvp) : non redistribué
+assets/
+*.jar
+__pycache__/
+*.pyc
