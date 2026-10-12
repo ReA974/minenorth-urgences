@@ -45,9 +45,9 @@ CARS = {
                          'unnamed.5': (40, 40, 40)}),
 }
 GROUP_MULT = {'cabin': 6.0, 'paint': 1.0, 'other': 0.5, 'glass': 0.3, 'light': 1.0, 'under': 0.08, 'in': 0.25}
-BUDGET = 36000
-PAINT_TARGET = 17000
-CABIN_TARGET = 9000
+BUDGET = 120000
+PAINT_TARGET = 45000
+CABIN_TARGET = 60000
 
 
 def donor_info(root, donor):
