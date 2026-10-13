@@ -30,3 +30,7 @@ Les voitures sans aucun crochet (la plupart des New Cars Pack et des « pretuned
 ## Dépanneuse : plaques et levage par les roues avant (13/10)
 Deux plaques blanches (avant et arrière) portent le texte « HARPY » déjà défini. Un second groupe de crochets `WheelLift` (type `tow_wheel`, derrière le plateau, orienté à 180°,
 non monté) lève une voiture par l'essieu avant sans la monter sur la rampe. Régénération : `tools/belroft_pack.py` (`tow_extras`).
+
+Fourche de levage visible (cadre gris derrière le plateau, barre arrière jaune), vrais emplacements de plaques gvp (`generic_licenseplate` : plaque européenne, US ou autre, à poser avec l'objet plaque de gvp
+à l'avant et à l'arrière, à la place des plaques factices) et crochet `WheelLift` au centre de la fourche : `python tools/tow_fork_plates.py` après `belroft_pack` (idempotent).
+La fourche est mobile (variable `wheel_fork`) : rangée sous le châssis par défaut, un clic sur l'un des coins arrière bas du plateau la sort / la range.

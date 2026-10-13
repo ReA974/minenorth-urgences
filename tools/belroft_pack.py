@@ -95,7 +95,7 @@ def tow_extras(j):
     # Crochet « roues avant » derrière le plateau : la voiture est levée par l'essieu avant (tow_wheel), sans monter sur la rampe.
     j['connectionGroups'].append({
         'groupName': 'WheelLift', 'canInitiateConnections': True, 'canInitiateSubConnections': True, 'isHitch': True,
-        'connections': [{'type': 'tow_wheel', 'pos': [0.0, 0.85, round(B['zr'] - 0.45, 3)], 'rot': [0.0, 180.0, 0.0], 'mounted': False, 'distance': 2.5}]})
+        'connections': [{'type': 'tow_wheel', 'pos': [0.0, 0.5, -3.9], 'rot': [0.0, 180.0, 0.0], 'mounted': False, 'distance': 2.5}]})
     types = ['entity', 'attack', 'click', 'vehicle']
     deck = [{'width': 2.4, 'height': 0.125, 'pos': [0.0, round(B['yt'] - 0.0625, 4), z]} for z in (-1.9, 0.0, 1.9)]
     steps = []
