@@ -26,3 +26,7 @@ Le plateau n'avait qu'un crochet `tow_flatbed` (propre aux véhicules Belroft) :
 donc rien ne s'accrochait. `harpy_depannage` porte maintenant trois crochets montés : `tow_flatbed`, `tow_flatbed_load` (centre du plateau) et `tow_wheel`
 (calé pour que la voiture soit centrée : origine 1,55 m derrière le centre, 0,44 m au-dessus du sol). Régénération : `tools/belroft_pack.py` (`flatbed_connections`).
 Les voitures sans aucun crochet (la plupart des New Cars Pack et des « pretuned ») ne peuvent toujours pas être accrochées.
+
+## Dépanneuse : plaques et levage par les roues avant (13/10)
+Deux plaques blanches (avant et arrière) portent le texte « HARPY » déjà défini. Un second groupe de crochets `WheelLift` (type `tow_wheel`, derrière le plateau, orienté à 180°,
+non monté) lève une voiture par l'essieu avant sans la monter sur la rampe. Régénération : `tools/belroft_pack.py` (`tow_extras`).
