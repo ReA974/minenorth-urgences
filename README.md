@@ -20,3 +20,9 @@ Police Nationale (livrée, BAC, transport de suspects), Sapeurs-Pompiers (VSAV a
 - Les fiches (moteurs, sièges, animations) sont celles de Belroft : **le pack dépend de `belroftmotors`** (jar Belroft Motors Mk 10).
 - Livrées par recoloration des textures « gray » + décalques en coordonnées 3D (`tools/belroft.py`) ; plateau de dépanneuse construit par `build_tow_truck` (ridelles « DÉPANNAGE 24H/24 », tête de plateau, treuil, rampe fixe). Plateau fixe : ni bascule ni collision propre.
 - Régénération : `BELROFT_ROOT=<jar Belroft extrait> python tools/build_pack.py …` (voir `tools/belroft_pack.py`), puis `tools/package.py`.
+
+## Dépanneuse : accrocher une voiture posée sur le plateau (13/10)
+Le plateau n'avait qu'un crochet `tow_flatbed` (propre aux véhicules Belroft) : les voitures gvp / Kaminari n'ont que `tow_wheel` (et `tow_flatbed_load` pour la GTR),
+donc rien ne s'accrochait. `harpy_depannage` porte maintenant trois crochets montés : `tow_flatbed`, `tow_flatbed_load` (centre du plateau) et `tow_wheel`
+(calé pour que la voiture soit centrée : origine 1,55 m derrière le centre, 0,44 m au-dessus du sol). Régénération : `tools/belroft_pack.py` (`flatbed_connections`).
+Les voitures sans aucun crochet (la plupart des New Cars Pack et des « pretuned ») ne peuvent toujours pas être accrochées.

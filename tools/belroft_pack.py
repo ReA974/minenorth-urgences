@@ -65,6 +65,21 @@ def ramp_toggle(j):
     j['collisionGroups'].append({'collisionTypes': ['attack', 'click'], 'collisions': levers})
 
 
+def flatbed_connections(B):
+    """Points d'attache du plateau. Les voitures des packs (gvp / Kaminari, New Cars) n'ont PAS de crochet « tow_flatbed » (propre à
+    Belroft) : elles n'ont que « tow_wheel » (essieu avant) et, pour la GTR, « tow_flatbed_load ». Un crochet n'accepte que son propre type,
+    d'où l'impossibilité d'accrocher une voiture posée sur le plateau. On ajoute donc les types que ces voitures ont, en les calant pour
+    que la voiture soit centrée sur le plateau (repère voiture : origine à l'arrière, essieu avant à z = 2,842 et 0,44 m au-dessus du sol).
+    - tow_flatbed_load : point de la voiture au sol et au milieu de sa longueur -> centre du plateau.
+    - tow_wheel : voiture centrée -> origine 1,55 m derrière le centre, crochet à 2,842 - 1,55 en avant du centre."""
+    zc = round((B['zr'] + B['zf']) / 2.0, 3)
+    return [
+        {'type': 'tow_flatbed', 'pos': [0.0, B['yt'], round(B['zf'] - 0.25, 3)], 'rot': [0.0, 0.0, 0.0], 'mounted': True, 'distance': 2.0},
+        {'type': 'tow_flatbed_load', 'pos': [0.0, B['yt'], zc], 'rot': [0.0, 0.0, 0.0], 'mounted': True, 'distance': 3.0},
+        {'type': 'tow_wheel', 'pos': [0.0, round(B['yt'] + 0.439, 3), round(zc + 2.842 - 1.55, 3)], 'rot': [0.0, 0.0, 0.0], 'mounted': True, 'distance': 3.0},
+    ]
+
+
 def tow_extras(j):
     """Dépanneuse : roues posées d'origine, point d'attache « plateau » (tow_flatbed) et collisions du plateau et de la rampe,
     sur le modèle de la remorque porte-voitures Belroft (trailer_cars) : on monte la voiture en conduisant sur la rampe."""
@@ -76,8 +91,7 @@ def tow_extras(j):
             p['maxValue'] = 1.1
     j.setdefault('connectionGroups', []).append({
         'groupName': 'Flatbed', 'canInitiateConnections': True, 'canInitiateSubConnections': True, 'isHitch': True,
-        'connections': [{'type': 'tow_flatbed', 'pos': [0.0, B['yt'], round(B['zf'] - 0.25, 3)], 'rot': [0.0, 0.0, 0.0],
-                         'mounted': True, 'distance': 2.0}]})
+        'connections': flatbed_connections(B)})
     types = ['entity', 'attack', 'click', 'vehicle']
     deck = [{'width': 2.4, 'height': 0.125, 'pos': [0.0, round(B['yt'] - 0.0625, 4), z]} for z in (-1.9, 0.0, 1.9)]
     steps = []
