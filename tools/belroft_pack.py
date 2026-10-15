@@ -84,6 +84,9 @@ def tow_extras(j):
     """Dépanneuse : roues posées d'origine, point d'attache « plateau » (tow_flatbed) et collisions du plateau et de la rampe,
     sur le modèle de la remorque porte-voitures Belroft (trailer_cars) : on monte la voiture en conduisant sur la rampe."""
     B = belroft.BED
+    # « cabmount » = basculement de la cabine vers l'avant (mode maintenance) ; l'original Belroft la met dans initialVariables, donc le camion
+    # apparaissait cabine relevée. On la retire : cabine fermée à l'apparition (elle reste basculable à la main).
+    j['initialVariables'] = [v for v in j.get('initialVariables', []) if v != 'cabmount']
     for p in j['parts']:
         if any(t.startswith('ground_wheel') for t in p.get('types', [])):
             p['defaultPart'] = 'gvp:commonbudwheel'      # roue de camion gvp ; la plage d'emplacement est élargie pour l'accepter
