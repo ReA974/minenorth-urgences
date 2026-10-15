@@ -87,6 +87,9 @@ def tow_extras(j):
     # « cabmount » = basculement de la cabine vers l'avant (mode maintenance) ; l'original Belroft la met dans initialVariables, donc le camion
     # apparaissait cabine relevée. On la retire : cabine fermée à l'apparition (elle reste basculable à la main).
     j['initialVariables'] = [v for v in j.get('initialVariables', []) if v != 'cabmount']
+    # Le camion bascule sur textureIndex 1 quand il est détruit (animation « damage_totaled ») : sans « textureNames » MTS plantait le client à la casse.
+    for d in j.get('definitions', []):
+        d['textureNames'] = ['harpy_depannage', 'harpy_burned']   # harpy_burned.png est copié depuis le pack Belroft dans textures/vehicles/trucks/
     for p in j['parts']:
         if any(t.startswith('ground_wheel') for t in p.get('types', [])):
             p['defaultPart'] = 'gvp:commonbudwheel'      # roue de camion gvp ; la plage d'emplacement est élargie pour l'accepter
